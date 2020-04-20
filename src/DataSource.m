@@ -31,7 +31,7 @@ classdef (Abstract) DataSource < handle
 
     methods (Abstract, Access = protected)
         getData(obj, useCache);
-        loadCache(obj);
+        importData(obj);
     end
 
     methods (Abstract, Access = public) 

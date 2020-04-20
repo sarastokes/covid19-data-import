@@ -22,9 +22,6 @@ classdef CovidTrackingProject < DataSource
         nationData
     end
 
-    properties (Constant, Hidden)
-    end
-
     methods
         function obj = CovidTrackingProject(varargin)
             % Covid Tracking Project had a number of APIs including the last two that return 
@@ -38,7 +35,6 @@ classdef CovidTrackingProject < DataSource
                 'states_current', 'https://covidtracking.com/api/states');
             
             obj@DataSource(url, varargin{:});
-
             obj.update();
         end
 
@@ -56,7 +52,7 @@ classdef CovidTrackingProject < DataSource
         end
     end
 
-    % Additional dataset-specific queries
+    % Additional dataset-specific functions
     methods
         function T = getDataByState(obj, stateName)
             % GETDATABYSTATE  Pulls one state from `stateData`
@@ -73,11 +69,6 @@ classdef CovidTrackingProject < DataSource
             
             % Different format from usa-daily and states ISO 8601 times...
             data.lastModified = datestr(datenum8601(data.lastModified));
-
-            % Remove fields that will be deprecated soon
-            data.hospitalized = [];
-            data.total = [];
-            data.posNeg = [];
         end
 
         function data = getStatesTotal(obj)
@@ -96,30 +87,30 @@ classdef CovidTrackingProject < DataSource
 
             data = obj.fixImportedData(data);
 
-            data.state = string(T.state);
-            data.fips = string(T.fips);
-
-            data.total = []; 
-            data.notes = [];
+            data.state = string(data.state);
+            data.fips = string(data.fips);
         end
     end
     
-    methods (Access = protected)       
-        function [cachedStates, cachedNation] = loadCache(obj)
-            cachedNation = obj.loadIfExists([obj.DATA_DIR, 'ctp-nation.json']);
-            cachedStates = obj.loadIfExists([obj.DATA_DIR, 'ctp-states.json']);
+    methods (Access = protected)
+        function [importedStateData, importedNationData] = importData(obj)
+            if obj.useCache
+                importedNationData = obj.loadIfExists([obj.DATA_DIR, 'ctp-nation.json']);
+                importedStateData = obj.loadIfExists([obj.DATA_DIR, 'ctp-states.json']);
+            else
+                importedNationData = webread(obj.URL.nation, obj.getWebOptions());
+                importedStateData = webread(obj.URL.states, obj.getWebOptions());
+            end
         end
 
         function [states, nation] = getData(obj)   
-            if obj.useCache
-                [importedStateData, importedNationalData] = obj.loadNationCache();
-            else
-                importedNationalData = webread(obj.URL.nation, obj.getWebOptions());
-                importedStateData = webread(obj.URL.states, obj.getWebOptions());
-            end
-            fprintf('\tImporting national data...\n')
-            nation = obj.parseAmericaDaily(importedNationalData);
-            fprintf('\tImporting state data...\n');
+            [importedStateData, importedNationData] = obj.importData();
+            % As mentioned below, the post-processing of Covid Tracking
+            % Project's data was pretty involved, so I moved it into
+            % separate functions rather than pasting it all into getData.
+            fprintf('\tParsing national data...\n')
+            nation = obj.parseAmericaDaily(importedNationData);
+            fprintf('\tParsing state data...\n');
             states = obj.parseStatesDaily(importedStateData);
         end
     end

@@ -7,13 +7,11 @@ addpath(genpath('.../covid19-data-import'))
 
 % Here I've written out my workflow for parsing the state-level data from
 % the Covid Tracking Project to provide some insight into how I ended up
-% writing the data scraping functions. Although this isn't "real" data-
-% scraping (where you are reading info from an html file), being able to
-% parse the results of API's like Covid Tracking Project's will take you
-% pretty far (especially with the datasets in the wiki currently).
-
-% Make sure you add the folder containing this script along with the
-% subfolders using addpath(genpath('...'));
+% writing the data scraping functions. Although this isn't all the data
+% scraping we discussed in class (where you are reading info from an html 
+% file), being able to parse the results of API's like Covid Tracking 
+% Project's will take you pretty far. It also is the most applicable 
+% approach to the datasets in the wiki currently).
 
 % First I'm going to define some custom parameters that will be passed to
 % MATLAB's webread function
@@ -25,8 +23,9 @@ opts = weboptions('Timeout', 120,...
 % connections - when queries fail, increasing Timeout is usually what
 % MATLAB suggests doing first so I usually just set it high from the start.
 
-% 2. The query will run faster if you tell MATLAB what content to expect.
-% All of the parsing done here will return .json data.
+% 2. Sometimes it's useful to tell MATLAB what content to expect so I 
+% usually do it by default even if it's not necessary. All of the importing 
+% done here will return .json data.
 
 % 3. loadjson is an improved version of MATLAB's built-in JSON decoder, and
 % is included in the 'lib' folder. It's part of JSONlab, a great toolbox
@@ -43,7 +42,7 @@ importedData = webread(url, opts);
 data = importedData{1};
 disp(data)
 % Not bad! It's basically ready to work with, although you might want to
-% convert the time into MATLAB's format
+% convert the time into MATLAB's format.
 data.dateModified = datestr(datenum8601(data.dateModified));
 
 % -------------------------------------------------------------------------
@@ -104,8 +103,9 @@ data = struct2table(cat(1, data{:}))
 % pandas data frames.
 openvar('data')  % An Excel-like visualization of the data table
 
-% To learn more about how to work with data in a MATLAB table: TODO: add
-% URL here!
+% To learn more about how to work with data in a MATLAB table, check out 
+% the examples MATLAB provides:
+% https://www.mathworks.com/help/matlab/tables.html
 
 %% Cleaning up the data table
 % If the imported data for a single parameter (like "hospitalized")
@@ -145,10 +145,8 @@ end
 % You may notice the "notes" field is always the same and requests that
 % "totalTestResults" be used instead of "total". So we can delete "total"
 % along with the "notes" column that takes up a lot of space
+disp(data.notes)
 data.notes = [];
 data.total = [];
-
-%% Selective imports
-% Or let's say you only care about a few of the values in the data
-% structure and those 6 weren't important to you. Say you only wanted
-% state, positive (aka cases) and death
+% I skipped this in the final function so the code doesn't break when
+% these fields get deprecated and potentially disappear.

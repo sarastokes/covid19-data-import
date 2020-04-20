@@ -81,7 +81,7 @@ classdef EuroCDC < DataSource
 
         function importedData = importData(obj)
             if obj.useCache
-                importedData = obj.loadCache();
+                importedData = obj.loadIfExists([obj.DATA_DIR, 'european-countries.json']);
             else
                 importedData = webread(obj.URL, obj.getWebOptions());
             end
