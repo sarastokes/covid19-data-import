@@ -34,7 +34,7 @@ classdef (Abstract) DataSource < handle
         loadCache(obj);
     end
 
-    methods (Abstract) 
+    methods (Abstract, Access = public) 
         update(obj);
         cacheData(obj);
     end
@@ -52,7 +52,7 @@ classdef (Abstract) DataSource < handle
     end
 
     % A few small convinience methods that were used by several subclasses
-    methods (Static, Access=protected)
+    methods (Static, Access = protected)
         function tf = isSemifull(col)
             % ISSEMIFULL  Whether column is semifull cell array
             if isa(col, 'cell') && nnz(cellfun(@isempty, col)) > 0
