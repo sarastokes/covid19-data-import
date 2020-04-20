@@ -1,7 +1,9 @@
 % Tutorial One - parsing JSON API data COVID TRACKING PROJECT Information
 % on their API: https://covidtracking.com/api
-addpath(genpath([cd, filesep, 'matlab_scrape']))
 
+% Make sure to add covid19-data-import and subfolders to your path by
+% editing the code below to reflect wherever you saved the repository
+addpath(genpath('.../covid19-data-import'))
 
 % Here I've written out my workflow for parsing the state-level data from
 % the Covid Tracking Project to provide some insight into how I ended up
