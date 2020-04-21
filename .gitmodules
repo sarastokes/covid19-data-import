@@ -1,3 +1,0 @@
-[submodule "lib/jsonlab"]
-	path = lib/jsonlab
-	url = https://github.com/fangq/jsonlab.git
