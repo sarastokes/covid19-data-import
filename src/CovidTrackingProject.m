@@ -62,6 +62,26 @@ classdef CovidTrackingProject < DataSource
             end
         end
 
+        function T = getDataByDay(obj, dateName)
+            % GETDATABYDATE
+            % 
+            % Input:
+            %   dateInput   (char) Must be valid input to datestr function
+            %
+            % Examples:
+            %   T = obj.getDataByDate('4-Apr-2020');
+            %
+            % See also:
+            %   datestr
+            % ------------------------------------------------------------
+            try
+                dateInput = datestr(dateInput);
+            catch
+                error('dateInput should be a valid input to datestr!');
+            end
+            T = obj.stateData(obj.stateData.date == dateInput, :);
+        end
+
         function data = getNationTotal(obj)
             % GETNATIONTOTAL  Returns current cumulative data for USA
             importedData = webread(obj.URL.nation_current, obj.getWebOptions());
@@ -86,9 +106,6 @@ classdef CovidTrackingProject < DataSource
             data = struct2table(cat(1, data{:}));
 
             data = obj.fixImportedData(data);
-
-            data.state = string(data.state);
-            data.fips = string(data.fips);
         end
     end
     
@@ -150,9 +167,13 @@ classdef CovidTrackingProject < DataSource
             easternTimeHeaders = {'checkTimeEt', 'lastUpdateEt'};
             numericTimeHeaders = 'date';
             utcTimeHeaders = {'dateModified', 'dateChecked', 'lastModified'};
+            charHeaders = {'state', 'fips', 'hash'};
             
             params = T.Properties.VariableNames;
 
+            % This isn't the most efficient approach but our datasets have
+            % a small number of parameters so the time cost is negligable
+            % and we avoid hard-coding any specific parameters
             for i = 1:numel(params)
                 if ismember(params{i}, easternTimeHeaders)
                     T.(params{i}) = datetime(datestr(T.(params{i})));
@@ -163,6 +184,8 @@ classdef CovidTrackingProject < DataSource
                     T.(params{i}) = datetime(T.(params{i}),... 
                         'InputFormat', 'uuuu-MM-dd''T''HH:mm:ssXXX',... 
                         'TimeZone', 'UTC');
+                elseif ismember(params{i}, charHeaders)
+                    T.(params{i}) = string(T.(params{i}));
                 elseif obj.isSemifull(T.(params{i}))
                     T.(params{i}) = semifullcells2doubles(T.(params{i}));
                 end

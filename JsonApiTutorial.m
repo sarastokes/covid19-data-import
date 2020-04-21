@@ -47,7 +47,9 @@ data.dateModified = datestr(datenum8601(data.dateModified));
 
 % -------------------------------------------------------------------------
 %% State-level data (multiple entries per field)
-% Here's where it gets more painful...
+% Here's where it gets harder. Fortunately the state-level data provides a
+% good overview of some of the issues you may run into when importing data
+% from an API into MATLAB so I'll go through it in detail.
 url = 'https://covidtracking.com/api/states';
 % You could actually go to this URL and see the data returned in your
 % browser, although it's hard to read in the raw format. I like to enable a
@@ -148,5 +150,17 @@ end
 disp(data.notes)
 data.notes = [];
 data.total = [];
-% I skipped this in the final function so the code doesn't break when
-% these fields get deprecated and potentially disappear.
+% It's good to know these will be deprecated so you don't make them an
+% important part of your analyses. I skipped this in the final function 
+% though so the code doesn't break when these fields get deprecated and 
+% potentially disappear.
+
+% Finally, the 'char' columns get put in individual cells which can be
+% a pain if you want to get at one specific value:
+T{1, 'state'}
+
+% So I'm converting them to a column of strings, a data type Matlab rolled
+% out in 2018 that's basically 'char' but easier to use in some cases
+T.state = string(T.state);
+T.fips = string(T.fips);
+T.hash = string(T.hash);

@@ -14,6 +14,7 @@ classdef NYTimes < DataSource
 %   https://www.nytimes.com/interactive/2020/us/coronavirus-us-cases.html
 %
 % See also:
+%   DataSource
 %   https://github.com/chadgreene/COVID19 - imports data and maps counties
 %       and has detailed information on how certain locations (e.g. NYC)
 %       are represented in the dataset.
@@ -65,7 +66,7 @@ classdef NYTimes < DataSource
                 importedData = obj.loadIfExists([obj.DATA_DIR, 'nytimes-counties.csv'])
             else
                 importedData = webread(obj.URL,... 
-                    weboptions('ContentReader', @readtable));
+                    weboptions('TimeOut', 120, 'ContentReader', @readtable));
             end
         end
 

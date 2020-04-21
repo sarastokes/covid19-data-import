@@ -10,6 +10,9 @@ classdef EuroCDC < DataSource
 % Source:
 %   https://www.ecdc.europa.eu/en/geographical-distribution-2019-ncov-cases
 %
+% See also:
+%   DataSource
+%
 % History:
 %   16Apr2020 - SSP
 % ------------------------------------------------------------------------
