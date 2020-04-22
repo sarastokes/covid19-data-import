@@ -1,4 +1,5 @@
 ### covid19-data-import
+https://github.com/sarastokes/covid19-data-import
 
 This repository is created as part of an epidemiology modeling seminar at the University of Washington (see the main repository at [VisCog/EpidemiologyModeling](https://github.com/VisCog/EpidemiologyModeling)). The goal here is to provide some useful utilities for accessing COVID-19 data while also covering general techniques for importing and parsing data with MATLAB.
 
