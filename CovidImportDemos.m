@@ -45,6 +45,7 @@ ctp = CovidTrackingProject();
 T = ctp.nationData;
 openvar('T');
 
+% Plot the hospitalizations over time
 ax_hospitalizations = axes('Parent', figure(), 'YScale', 'log');
 hold(ax_hospitalizations, 'on');
 plot(ax_hospitalizations, T.date, T.hospitalizedCumulative, '-o',... 
